@@ -1,10 +1,16 @@
 package cloudServer.ports;
 
+
 public class Constants {
 
-    private static String WAREHOUSE_URL = "http://localhost:8095";
+    private static int PORT = 8105;
 
-    public static String GET_COMPONENTS_URL = WAREHOUSE_URL + "/api/components";
+    private static String HOST = "http://localhost:" + PORT;
 
-    public static String URL_GET_COMPONENT_BY_PRODUCTID = GET_COMPONENTS_URL + "?productID=%s";
+    private static String API_HOST = HOST + "/api";
+
+    public static String FILE_HOST = API_HOST + "/file";
+
+    public static String USER_HOST = API_HOST + "/user";
+    public static String STORAGE_PATH = System.getProperty("user.dir") + "/Storage/";
 }

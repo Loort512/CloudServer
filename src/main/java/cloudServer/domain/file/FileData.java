@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Entity(name = "FILE")
 @Data
 @AllArgsConstructor
-public class File {
+public class FileData {
 
     @Id
     @GeneratedValue
@@ -26,11 +26,11 @@ public class File {
     @Column(name="`fileNAme`")
     private String fileName;
 
-    public File() {
+    public FileData() {
         super();
     }
 
-    public File(String pathToFile, long userID, String fileName) {
+    public FileData(String pathToFile, long userID, String fileName) {
         super();
         this.pathToFile = pathToFile;
         this.userID = userID;
