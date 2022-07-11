@@ -17,11 +17,8 @@ public class MyUser {
     @GeneratedValue
     private long id;
 
-    @Column(name="firstName")
-    private String firstName;
-
     @Column
-    private String lastName;
+    private String username;
 
     @Column
     private String customPassword;
@@ -33,11 +30,16 @@ public class MyUser {
         super();
     }
 
-    public MyUser(String firstName, String lastName, String customPassword, String customToken) {
+    public MyUser(String username, String customPassword, String customToken) {
         super();
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.username = username;
         this.customPassword = customPassword;
         this.customToken = customToken;
+    }
+
+    public MyUser(String username, String customPassword) {
+        super();
+        this.username = username;
+        this.customPassword = customPassword;
     }
 }

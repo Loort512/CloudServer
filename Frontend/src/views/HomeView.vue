@@ -10,10 +10,10 @@
         <img alt="Vue logo" src="../assets/privacy-background-image.jpeg">
         <p>
           Store your data in a personal and private Cloud 
-          <br><br><br>
+          <br><br>
           Start by logging in 
         </p>
-        <input type="button" value="Login">
+        <input type="button" value="Login" @click="this.$router.push( {path: '/login'}  )" >
       </template>
     </Content>
   </div>
@@ -32,6 +32,11 @@ export default {
   },
   created(){
     
-  } 
+  },
+  methods:{
+    routeLogin(){
+        this.$router.push( {path: '/login'}  )
+    } 
+  }
 }
 </script>

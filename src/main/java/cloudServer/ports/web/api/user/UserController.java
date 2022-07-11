@@ -5,10 +5,7 @@ import cloudServer.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -33,6 +30,22 @@ public class UserController {
         }
 
         return ResponseEntity.ok(users);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody CreateUserRequestBody createUserRequestBody) {
+        if(createUserRequestBody.getUsername().equals("")) {
+            return ResponseEntity.badRequest().body("username cannot be empty");
+        }
+        Optional<MyUser> existingUser = userService.getUserByUsername(createUserRequestBody.getUsername());
+
+        if(existingUser.isPresent()) {
+            return ResponseEntity.badRequest().body("username already exists");
+        }
+
+        String token = userService.createUser(createUserRequestBody.getUsername(), createUserRequestBody.getPassword());
+
+        return ResponseEntity.ok(token);
     }
 
     @GetMapping("/login")

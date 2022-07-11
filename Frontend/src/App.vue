@@ -1,7 +1,10 @@
 <template>
   <nav class="nav">
     <router-link to="/">Home</router-link> |
-    <router-link to="/login">Login</router-link><br>
+    <router-link to="/login" v-if="this.isLoggedIn()">Login</router-link>
+    <router-link @click="this.logout()" to="/logout" v-if="!this.isLoggedIn()">Logout</router-link>   <br>
+    <router-link to="/cloudStore" v-if="!this.isLoggedIn()">Store</router-link> |  
+    <router-link to="/adminView" v-if="this.isAdmin()">Admin</router-link> 
   </nav>
   <div class="content">
     <router-view/>
@@ -32,6 +35,19 @@ export default{
     // this.$store.dispatch('addStaff',{id: '6', firstName: 'Henrike1', lastName: 'Muster', dob: '10.08.1995', gender: 'w', department: 'HTW', emailID: 'he.muster@yahoo.de'} );
     // this.$store.dispatch('addStaff',{id: '7', firstName: 'Laura1', lastName: 'Muster', dob: '10.10.1995', gender: 'w', department: 'HTW', emailID: 'laura.muster@yahoo.de'} );
 
+  },
+  methods:{
+    isLoggedIn(){
+      return this.$store.state.loggedIn !== "true";
+    } ,
+    logout(){
+      console.log("logout")
+      this.$store.dispatch('logout', "");
+      this.$router.push( {path: '/login'}  )
+    } ,
+    isAdmin() {
+      return true;
+    } 
   }  
 
 } 
@@ -47,7 +63,7 @@ export default{
 }
 
 nav {
-  padding: 5%;
+  padding: 3%;
   background: #3c8733e8;
 }
 

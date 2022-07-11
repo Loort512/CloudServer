@@ -30,10 +30,10 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping()
-    public ResponseEntity<List<MyFile>> getFileNames(@RequestParam(required = false) Long userID) {
+    public ResponseEntity<List<MyFile>> getFileNames(@RequestParam(required = false) String token) {
         List<MyFile> response = new ArrayList<>();
-        if(userID != null) {
-            response = fileService.getFileNamesFromUser(userID);
+        if(token != null) {
+            response = fileService.getFileNamesFromUser(token);
         }else {
             response = fileService.getFileNames();
         }
@@ -67,9 +67,9 @@ public class FileController {
             headers.add("content-disposition", "inline;filename=" +file.getName());
         }
 
-        //headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        //headers.add("Pragma", "no-cache");
-        //headers.add("Expires", "0");
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
 
         ResponseEntity<Object>
                 responseEntity = ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(
@@ -82,6 +82,7 @@ public class FileController {
     @PostMapping()
     public ResponseEntity<Void> uploadFile(@RequestPart("file") MultipartFile file) {
         String currentDirectory = STORAGE_PATH + file.getOriginalFilename();
+        fileService.uploadFile(file.getOriginalFilename(), 1);
         File convFile = new File(currentDirectory);
         try {
             file.transferTo(convFile);

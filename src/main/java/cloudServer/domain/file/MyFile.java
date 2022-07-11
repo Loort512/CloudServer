@@ -16,6 +16,10 @@ public class MyFile {
     private String url;
 
 
+    public MyFile(String name, long userID) {
+        this.name = name;
+        this.userID = userID;
+    }
     public static MyFile of(FileData file) {
         MyFile f = new MyFile();
         f.setId(file.getId());

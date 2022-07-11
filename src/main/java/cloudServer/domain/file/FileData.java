@@ -36,4 +36,8 @@ public class FileData {
         this.userID = userID;
         this.fileName = fileName;
     }
+
+    public static FileData of(MyFile myFile) {
+        return new FileData("pathToFile", myFile.getUserID(), myFile.getName());
+    }
 }

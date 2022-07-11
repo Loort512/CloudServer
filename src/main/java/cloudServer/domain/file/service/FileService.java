@@ -13,7 +13,7 @@ public interface FileService {
 
     List<MyFile> getFileNames();
 
-    List<MyFile> getFileNamesFromUser(long userID);
+    List<MyFile> getFileNamesFromUser(String token);
 
     Optional<MyFile> getFileById(long id);
 
@@ -24,4 +24,6 @@ public interface FileService {
     String getPathFromFile(long id);
 
     MyFile updateFile(MyFile toUpdate);
+
+    boolean uploadFile(String fileName, long userID);
 }
