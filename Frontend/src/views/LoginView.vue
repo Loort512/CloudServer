@@ -62,8 +62,8 @@ export default {
         axios.get('http://localhost:8105/api/user/login?username='+data.username+'&password='+data.password)
         .then(response => {
             console.log("login Response: ", response);
-            this.$store.dispatch('addToken', response);
-            axios.defaults.headers.common['Authorization'] = `Bearer TOKEN`;
+            this.$store.dispatch('addToken', response.data);
+            axios.defaults.headers.common['AuthorizationToken'] = this.$store.state.token;
             this.$router.push( {path: '/cloudStore'}  )
         })
         .catch(error => {

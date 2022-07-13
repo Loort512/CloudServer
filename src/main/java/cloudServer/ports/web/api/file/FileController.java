@@ -1,20 +1,23 @@
 package cloudServer.ports.web.api.file;
 
+import cloudServer.application.services.ApiService;
 import cloudServer.domain.file.MyFile;
 import cloudServer.domain.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,18 +28,21 @@ import static cloudServer.ports.Constants.STORAGE_PATH;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/file")
+@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "http://localhost:8080")//°°mr°° TODO: http://localhost:8080
 public class FileController {
 
     private final FileService fileService;
+    private final HttpSession session;
+
+    private final ApiService apiService;
 
     @GetMapping()
-    public ResponseEntity<List<MyFile>> getFileNames(@RequestParam(required = false) String token) {
+    public ResponseEntity<List<MyFile>> getFileNames() {
         List<MyFile> response = new ArrayList<>();
-        if(token != null) {
-            response = fileService.getFileNamesFromUser(token);
-        }else {
-            response = fileService.getFileNames();
-        }
+        int uuid = apiService.getUserIdFromSession(session);
+
+        response.addAll(fileService.getFileNamesFromUser(uuid));
 
         return ResponseEntity.ok(response);
     }
@@ -51,56 +57,65 @@ public class FileController {
         }
 
         File file = new File(filename);
-        InputStreamResource resource = null;
+        FileInputStream resource = null;
         try {
-            resource = new InputStreamResource(new FileInputStream(file));
+            resource = new FileInputStream(file);
+            byte[] arr = new byte[(int) file.length()];
+            resource.read(arr);
+            resource.close();
+
+            return ResponseEntity.ok().
+                    header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + file.getName() + "\"").
+                    body(new ByteArrayResource(arr));
         } catch (FileNotFoundException e) {
-            log.error(String.valueOf(e));
-            return ResponseEntity.internalServerError().build();
+            log.error(e.getMessage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
         }
 
-        HttpHeaders headers = new HttpHeaders();
-
-        if(download) {
-            headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getName()));
-        }else {
-            headers.add("content-disposition", "inline;filename=" +file.getName());
-        }
-
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
-
-        ResponseEntity<Object>
-                responseEntity = ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(
-                MediaType.parseMediaType("application/txt")).body(resource);
-
-        return responseEntity;
+        return ResponseEntity.internalServerError().build();
     }
 
 
     @PostMapping()
     public ResponseEntity<Void> uploadFile(@RequestPart("file") MultipartFile file) {
-        String currentDirectory = STORAGE_PATH + file.getOriginalFilename();
-        fileService.uploadFile(file.getOriginalFilename(), 1);
-        File convFile = new File(currentDirectory);
-        try {
-            file.transferTo(convFile);
-        } catch (IOException e) {
+        int userID = apiService.getUserIdFromSession(session);
+
+        if(!fileService.uploadFile(file, userID)) {
             return ResponseEntity.internalServerError().build();
         }
+
         return ResponseEntity.ok().build();
     }
 
     @PutMapping()
     public ResponseEntity<MyFile> updateFile(@RequestBody MyFile toUpdate) {
+        long sessionUID = apiService.getUserIdFromSession(session);
+
         Optional<MyFile> file = fileService.getFileById(toUpdate.getId());
 
         if(!file.isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
+        // just update if it's the user's file
+        if(file.get().getUserID() != sessionUID) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         return ResponseEntity.ok(fileService.updateFile(toUpdate));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFile(@PathVariable long id) {
+        boolean success = fileService.deleteFile(id);
+
+        if(!success) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 
 }

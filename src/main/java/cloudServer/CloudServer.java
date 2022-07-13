@@ -25,8 +25,8 @@ public class CloudServer {
 
 	@PostConstruct()
 	public void initTestData() {
-		MyUser u1 = new MyUser("Mark", "abc", "token");
-		MyUser u2 = new MyUser("Marion", "abc", "token1");
+		MyUser u1 = new MyUser("Mark", "abc", "token-token-token", true);
+		MyUser u2 = new MyUser("Marion", "abc", "token1-token1-token1", false);
 		userRepository.save(u1);
 		userRepository.save(u2);
 

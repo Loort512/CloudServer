@@ -2,6 +2,7 @@ package cloudServer.domain.file.service;
 
 import cloudServer.domain.file.MyFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.File;
@@ -13,7 +14,7 @@ public interface FileService {
 
     List<MyFile> getFileNames();
 
-    List<MyFile> getFileNamesFromUser(String token);
+    List<MyFile> getFileNamesFromUser(long userID);
 
     Optional<MyFile> getFileById(long id);
 
@@ -25,5 +26,7 @@ public interface FileService {
 
     MyFile updateFile(MyFile toUpdate);
 
-    boolean uploadFile(String fileName, long userID);
+    boolean uploadFile(MultipartFile file, long userID);
+
+    boolean deleteFile(long fileId);
 }

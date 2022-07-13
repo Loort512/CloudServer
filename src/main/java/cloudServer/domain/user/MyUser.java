@@ -26,20 +26,25 @@ public class MyUser {
     @Column
     private String customToken;
 
+    @Column
+    private boolean isAdmin;
+
     public MyUser() {
         super();
     }
 
-    public MyUser(String username, String customPassword, String customToken) {
+    public MyUser(String username, String customPassword, String customToken, boolean isAdmin) {
         super();
         this.username = username;
         this.customPassword = customPassword;
         this.customToken = customToken;
+        this.isAdmin = isAdmin;
     }
 
-    public MyUser(String username, String customPassword) {
+    public MyUser(String username, String customPassword, boolean isAdmin) {
         super();
         this.username = username;
         this.customPassword = customPassword;
+        this.isAdmin = isAdmin;
     }
 }

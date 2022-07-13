@@ -4,6 +4,7 @@ import cloudServer.domain.user.MyUser;
 import cloudServer.domain.user.UserRepository;
 import cloudServer.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -36,14 +38,28 @@ public class UserServiceImpl implements UserService {
     public Optional<MyUser> loginUser(String username, String password) {
         Optional<MyUser> user = userRepository.findByUsername(username);
         if(user.isPresent() && user.get().getCustomPassword().equals(password)) {
+
+            // generate Token for session:
+            StringBuilder token = new StringBuilder();
+            long currentTimeInMilisecond = Instant.now().toEpochMilli();
+            String generatedToken = token.append(currentTimeInMilisecond).append("-")
+                    .append(UUID.randomUUID().toString()).toString();
+
+            log.info(String.format("user with id: %s got token: %s", user.get().getId(), user.get().getCustomToken()));
+
+            user.get().setCustomToken(generatedToken);
+            userRepository.save(user.get());
+
             return user;
         }
+
+
         return Optional.empty();
     }
 
     @Override
     public String createUser(String username, String password) {
-        MyUser myUser = new MyUser(username, password);
+        MyUser myUser = new MyUser(username, password, false);
         StringBuilder token = new StringBuilder();
         long currentTimeInMilisecond = Instant.now().toEpochMilli();
         token.append(currentTimeInMilisecond).append("-")

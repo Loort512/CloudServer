@@ -1,5 +1,6 @@
 package cloudServer.ports.web.api.user;
 
+import cloudServer.application.services.ApiService;
 import cloudServer.domain.user.MyUser;
 import cloudServer.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,13 +17,19 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
+@CrossOrigin(origins = "http://localhost:8080")//°°mr°° TODO: http://localhost:8080
 public class UserController {
 
     private final UserService userService;
 
+    private final HttpSession session;
+
+    private final ApiService apiService;
+
 
     @GetMapping
     public ResponseEntity<List<MyUser>> getUsers(@RequestParam(required = false) Long id) {
+        long sessionUID = apiService.getUserIdFromSession(session);
         List<MyUser> users = new ArrayList<>();
         if(id != null) {
             users.addAll(userService.getUserByID(id));

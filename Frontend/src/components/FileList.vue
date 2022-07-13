@@ -31,10 +31,12 @@ export default {
   },
   methods: {
     loadItems: function () {
-      axios.defaults.headers.common['Authorization'] = `Bearer TOKEN`;
+      axios.defaults.headers.common['AuthorizationToken'] = `${this.$store.state.token}`;
+      console.log("default headers: ", axios.defaults.headers.common)
+      console.log("token: ", this.urlGetAll)
       axios.get(this.urlGetAll)
         .then(response => {
-          console.log(response)
+          console.log("File loading: ", response)
           this.items = response.data
         })
         .catch(e => {
@@ -61,9 +63,12 @@ export default {
   },
   mounted: function () {
     // this.todo()
+  },
+  created() {
+    axios.defaults.headers.common['AuthorizationToken'] = `${this.$store.state.token}`;
     this.loadItems();
-    axios.defaults.headers.common['Authorization'] = `Bearer TOKEN`;
-  }
+    //axios.defaults.headers.common['Authorization'] = `Bearer ` + this.$store.state.token;
+  } 
 }
 </script>
 <style scoped>
