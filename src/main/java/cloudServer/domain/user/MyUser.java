@@ -21,6 +21,12 @@ public class MyUser {
     private String username;
 
     @Column
+    private String firstName;
+
+    @Column
+    private String lastName;
+
+    @Column
     private String customPassword;
 
     @Column
@@ -33,18 +39,27 @@ public class MyUser {
         super();
     }
 
-    public MyUser(String username, String customPassword, String customToken, boolean isAdmin) {
+    public MyUser(String username,
+                  String customPassword,
+                  String customToken,
+                  String firstName,
+                  String lastName,
+                  boolean isAdmin) {
         super();
         this.username = username;
         this.customPassword = customPassword;
         this.customToken = customToken;
         this.isAdmin = isAdmin;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
-    public MyUser(String username, String customPassword, boolean isAdmin) {
+    public MyUser(String username, String customPassword, String firstName, String lastName, boolean isAdmin) {
         super();
         this.username = username;
         this.customPassword = customPassword;
         this.isAdmin = isAdmin;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 }

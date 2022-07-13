@@ -1,10 +1,10 @@
 <template>
   <nav class="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/login" v-if="this.isLoggedIn()">Login</router-link>
-    <router-link @click="this.logout()" to="/logout" v-if="!this.isLoggedIn()">Logout</router-link>   <br>
-    <router-link to="/cloudStore" v-if="!this.isLoggedIn()">Store</router-link> |  
-    <router-link to="/adminView" v-if="this.isAdmin()">Admin</router-link> 
+    <router-link to="/">Home</router-link> 
+    <router-link to="/login" v-if="this.isLoggedIn()"> | Login</router-link>
+    <router-link @click="this.logout()" to="/logout" v-if="!this.isLoggedIn()"> | Logout</router-link>   <br>
+    <router-link to="/cloudStore" v-if="!this.isLoggedIn()">Store</router-link>  
+    <router-link to="/adminView" v-if="this.isAdmin()"> | Admin</router-link> 
   </nav>
   <div class="content">
     <router-view/>
@@ -46,7 +46,8 @@ export default{
       this.$router.push( {path: '/login'}  )
     } ,
     isAdmin() {
-      return true;
+      console.log("isAdmin for navi: ", this.$store.state.isAdmin);
+      return this.$store.state.isAdmin;
     } 
   }  
 

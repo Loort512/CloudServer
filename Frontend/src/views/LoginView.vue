@@ -22,7 +22,26 @@
                         <input type="password" id="password" v-model="password" >
                     </template>
                 </FormInput>
-                <input type="button" value="Login" @click="login()" >
+                <div v-if="showRegisterForm" class="registerAdditionalForms">
+                    <FormInput>
+                        <template v-slot:label>
+                            <label for="text">First Name:</label>
+                        </template>
+                        <template v-slot:input>
+                            <input type="text" id="firstName" v-model="firstName" >
+                        </template>
+                    </FormInput>
+                    <FormInput>
+                        <template v-slot:label>
+                            <label for="text">Last Name:</label>
+                        </template>
+                        <template v-slot:input>
+                            <input type="text" id="lastName" v-model="lastName" >
+                        </template>
+                    </FormInput>
+                </div>
+
+                <input type="button" value="Login" v-if="!this.showRegisterForm" @click="login()" >
                 <input type="button" value="Register" @click="register()" >
             </template>
     </Content>
@@ -40,8 +59,11 @@ export default {
       return{
           username: '',
           password: '',
+          firstName: '',
+          lastName: '',
           alertMessage: '',
-          showAlert: false
+          showAlert: false,
+          showRegisterForm: false
       } 
   }, 
   setup(){
@@ -59,10 +81,11 @@ export default {
             password: this.password
         }  
         console.log("data: ", data);
-        axios.get('http://localhost:8105/api/user/login?username='+data.username+'&password='+data.password)
+        axios.get('http://localhost:8105/api/user/login?username='+data.username+'&password='+data.password+"&firstName")
         .then(response => {
             console.log("login Response: ", response);
-            this.$store.dispatch('addToken', response.data);
+            this.$store.dispatch('addToken', response.data.token);
+            this.$store.dispatch('addAdmin', response.data.admin);
             axios.defaults.headers.common['AuthorizationToken'] = this.$store.state.token;
             this.$router.push( {path: '/cloudStore'}  )
         })
@@ -74,11 +97,20 @@ export default {
         })
     } ,
     register() {
+        console.log("showRegisterForm: ",this.showRegisterForm)
+        if(!this.showRegisterForm){
+            this.showRegisterForm = true;
+            return;
+        } 
+
         var data = {
             username: this.username,
-            password: this.password
+            password: this.password,
+            firstName: this.firstName,
+            lastName: this.lastName
         }
-        axios.post('http://localhost:8105/api/user/register', data)
+        console.log("register data: ", data);
+        axios.put('http://localhost:8105/api/user/register', data)
         .then(response => {
             console.log(response);
             this.showAlert = true;
@@ -87,11 +119,16 @@ export default {
             //commit('SET_LOADED_TODOS', response.data.results)
         })
         .catch(error => {
+            console.log("error: ", error);
             this.showAlert = true;
-            this.alertMessage = "Registration error";
+            this.alertMessage = "Registration error\n";
+            this.alertMessage += error.response.data;
             // handle error
             console.log(error)
         })
+        .finally(() => {
+             this.showRegisterForm = false;
+        } )
     } 
   } 
 }

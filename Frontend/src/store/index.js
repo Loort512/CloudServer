@@ -3,7 +3,8 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     token: "",
-    loggedIn: ""
+    loggedIn: "",
+    isAdmin: false
   },
   getters: {
   },
@@ -17,7 +18,12 @@ export default createStore({
       console.log("logout Vue Store")
       state.token = "";
       state.loggedIn = false;
-    } 
+      state.isAdmin = false;
+    } ,
+    addAdmin: (state, payload) => {
+      console.log("addAdmin: ", payload);
+      state.isAdmin = payload;
+    }  
   },
   actions: {
     addStudent: (context, payload) =>{
@@ -28,6 +34,9 @@ export default createStore({
     } ,
     logout: (context, payload)  => {
       context.commit('logout', payload);
+    } ,
+    addAdmin: (context, payload) =>{
+      context.commit('addAdmin', payload);
     } 
     
   },

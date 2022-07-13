@@ -20,8 +20,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<MyUser> getUserByID(long id) {
-        return null;
+    public Optional<MyUser> getUserByID(long id) {
+        return userRepository.findById(id);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<MyUser> getAllUsers() {
-        return null;
+        return userRepository.findAll();
     }
 
     @Override
@@ -58,8 +58,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String createUser(String username, String password) {
-        MyUser myUser = new MyUser(username, password, false);
+    public String createUser(String username, String password, String firstName, String lastName) {
+        MyUser myUser = new MyUser(username, password, firstName, lastName, false);
         StringBuilder token = new StringBuilder();
         long currentTimeInMilisecond = Instant.now().toEpochMilli();
         token.append(currentTimeInMilisecond).append("-")
@@ -72,5 +72,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<MyUser> getUserByToken(String token) {
         return userRepository.findByCustomToken(token);
+    }
+
+    @Override
+    public void deleteUser(MyUser myUser) {
+        userRepository.delete(myUser);
     }
 }

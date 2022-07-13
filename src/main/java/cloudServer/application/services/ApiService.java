@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -16,13 +17,17 @@ public class ApiService {
     private final UserService userService;
 
     public boolean isUserAdmin(HttpSession session) {
-        return this.getUserFromSession(session).isAdmin();
+        Optional<MyUser> user = this.getUserFromSession(session);
+        if(!user.isPresent()) {
+            return false;
+        }
+        return user.get().isAdmin();
     }
 
-    public MyUser getUserFromSession(HttpSession session) {
+    public Optional<MyUser> getUserFromSession(HttpSession session) {
         long userID = getUserIdFromSession(session);
 
-        return userService.getUserByID(userID).get(0);
+        return userService.getUserByID(userID);
     }
 
     public int getUserIdFromSession(HttpSession session) {

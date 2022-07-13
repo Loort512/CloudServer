@@ -43,16 +43,17 @@
                         <th>Username</th>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th>Admin</th>
                         <th>Actions</th>
                     </tr>
-                    <tr>
-                        <th>2</th>
-                        <th>Moni</th>
-                        <th>Monika</th>
-                        <th>Muster</th>
+                    <tr v-for="user in users" >
+                        <th>{{user.id}}</th>
+                        <th>{{user.username}}</th>
+                        <th>{{user.firstName}}</th>
+                        <th>{{user.lastName}}</th>
+                        <th>{{user.admin}}</th>
                         <th>
-                            <input type="Button" value="Delete">
-                            <input type="Button" value="Rename">
+                            <input type="Button" value="Delete" @click="deleteUser(user.id)" >
                         </th>
                     </tr>
                 </table>
@@ -64,6 +65,7 @@
 import Content from '@/components/Content.vue'
 import Modal from '@/components/Modal.vue'
 import FormInput from '@/components/FormInput.vue'
+import axios from 'axios'
 
 
 export default {
@@ -73,11 +75,41 @@ export default {
     Modal,
     FormInput
   },
+  data(){
+    return{
+        userURL: 'http://localhost:8105/api/user/',
+        users: []  
+    } 
+  } ,
   created(){
-    
+    console.log("set token for AdminView: ", this.$store.state.token)
+    axios.defaults.headers.common['AuthorizationToken'] = this.$store.state.token;
+
+    this.loadAllUsers();
   },
   methods:{
-     
+    loadAllUsers(){    
+        axios.get(this.userURL)
+            .then(response => {
+            console.log("get all Users Response: ", response.data);
+            this.users = response.data;
+            })
+            .catch(error => {
+                // handle error
+                console.log("login error:",error)
+            })   
+    } ,
+    deleteUser(userId){
+        axios.delete(this.userURL + userId)
+            .then(response => {
+            console.log("delete User " + userId + " Users Response: ", response.data);
+            this.loadAllUsers();
+            })
+            .catch(error => {
+                // handle error
+                console.log("login error:",error)
+            })  
+    } 
   }
 }
 </script>

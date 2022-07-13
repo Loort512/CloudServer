@@ -9,7 +9,7 @@ import java.util.Optional;
 @Service
 public interface UserService {
 
-    List<MyUser> getUserByID(long id);
+    Optional<MyUser> getUserByID(long id);
 
     Optional<MyUser> getUserByUsername(String username);
 
@@ -17,7 +17,9 @@ public interface UserService {
 
     Optional<MyUser> loginUser(String username, String password);
 
-    String createUser(String username, String password);
+    String createUser(String username, String password, String firstName, String lastName);
 
     Optional<MyUser> getUserByToken(String token);
+
+    void deleteUser(MyUser myUser);
 }

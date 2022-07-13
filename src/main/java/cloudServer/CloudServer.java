@@ -25,14 +25,14 @@ public class CloudServer {
 
 	@PostConstruct()
 	public void initTestData() {
-		MyUser u1 = new MyUser("Mark", "abc", "token-token-token", true);
-		MyUser u2 = new MyUser("Marion", "abc", "token1-token1-token1", false);
+		MyUser u1 = new MyUser("Mark", "abc", "token-token-token", "Mark", "Muster", true);
+		MyUser u2 = new MyUser("Marion", "abc", "token1-token1-token1", "Marion", "Bauer", false);
 		userRepository.save(u1);
 		userRepository.save(u2);
 
-		FileData f1 = new FileData("pathToFile", 1, "cat.jpeg");
-		FileData f2 = new FileData("pathToFile", 1, "Unbenannt.PNG");
-		FileData f3 = new FileData("pathToFile", 2, "tmp.txt");
+		FileData f1 = new FileData(1, "cat.jpeg");
+		FileData f2 = new FileData(1, "Unbenannt.PNG");
+		FileData f3 = new FileData( 2, "tmp.txt");
 
 		fileRepository.save(f1);
 		fileRepository.save(f2);

@@ -17,27 +17,23 @@ public class FileData {
     @GeneratedValue
     private long id;
 
-    @Column(name="`pathToFile`")
-    private String pathToFile;
-
     @Column(name="`userID`")
     private long userID;
 
-    @Column(name="`fileNAme`")
+    @Column(name="`fileName`")
     private String fileName;
 
     public FileData() {
         super();
     }
 
-    public FileData(String pathToFile, long userID, String fileName) {
+    public FileData(long userID, String fileName) {
         super();
-        this.pathToFile = pathToFile;
         this.userID = userID;
         this.fileName = fileName;
     }
 
     public static FileData of(MyFile myFile) {
-        return new FileData("pathToFile", myFile.getUserID(), myFile.getName());
+        return new FileData(myFile.getUserID(), myFile.getName());
     }
 }

@@ -29,8 +29,9 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // URLs without login:
-        if(request.getRequestURL().toString().endsWith("/login")) {
+        // URLs without login:/register
+        if(request.getRequestURL().toString().endsWith("/login")
+                || request.getRequestURL().toString().endsWith("/register") ) {
             return true;
         }
 

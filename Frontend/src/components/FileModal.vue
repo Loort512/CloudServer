@@ -51,7 +51,6 @@ export default {
     showModal: Boolean
   } ,
   created(){
-    
   },
   methods:{
     renameItem: function(id) {
@@ -64,7 +63,7 @@ export default {
             name : this.item.name
         } 
 
-        axios.put(this.fileUrl, myFile)
+        axios.patch(this.fileUrl, myFile)
           .then(response => {
             console.log("File loading: ", response)
             //this.item.name = "renamed";
@@ -107,11 +106,14 @@ export default {
       var url = this.fileUrl + "/" + id;
       axios.delete(url).then(response => {
         console.log("response: ", response);
-          this.loadItems();
       })
       .catch(e => {
-        console.log("Loeschen fehlgeschlagen");
+        console.log("Loeschen fehlgeschlagen", e);
       })
+      .finally(() =>{
+        console.log("emit reload items");
+        this.$emit("reloadItems");
+      } )
     } 
   }
 }

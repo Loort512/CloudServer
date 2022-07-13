@@ -4,6 +4,7 @@ import cloudServer.application.services.ApiService;
 import cloudServer.domain.user.MyUser;
 import cloudServer.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,9 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
@@ -28,38 +31,55 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<List<MyUser>> getUsers(@RequestParam(required = false) Long id) {
+    public ResponseEntity<List<UserDataResponse>> getUsers(@RequestParam(required = false) Long id) {
         long sessionUID = apiService.getUserIdFromSession(session);
         List<MyUser> users = new ArrayList<>();
-        if(id != null) {
-            users.addAll(userService.getUserByID(id));
+        if(id == null) {
+            if(apiService.isUserAdmin(session)) {
+                users.addAll(userService.getAllUsers());
+            }else {
+                log.info("User {} tried to access all User Data. But has no admin role!", sessionUID);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
         }else {
-            users.addAll(userService.getAllUsers());
+            Optional<MyUser> myUser = userService.getUserByID(id);
+            if(myUser.isPresent()) {
+                users.add(myUser.get());
+            }
         }
+        List<UserDataResponse> response = users
+                .stream()
+                .map(myUser -> UserDataResponse.of(myUser))
+                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/register")
+    @PutMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody CreateUserRequestBody createUserRequestBody) {
-        if(createUserRequestBody.getUsername().equals("")) {
-            return ResponseEntity.badRequest().body("username cannot be empty");
+        List<String> validationErrors = CreateUserRequestBody.validate(createUserRequestBody);
+        if(!validationErrors.isEmpty()) {
+            return ResponseEntity.badRequest().body(validationErrors.stream().collect(Collectors.joining("\n")));
         }
+
         Optional<MyUser> existingUser = userService.getUserByUsername(createUserRequestBody.getUsername());
 
         if(existingUser.isPresent()) {
             return ResponseEntity.badRequest().body("username already exists");
         }
 
-        String token = userService.createUser(createUserRequestBody.getUsername(), createUserRequestBody.getPassword());
+        String token = userService.createUser(createUserRequestBody.getUsername(),
+                createUserRequestBody.getPassword(),
+                createUserRequestBody.getFirstName(),
+                createUserRequestBody.getLastName());
 
-        return ResponseEntity.ok(token);
+        return ResponseEntity.status(HttpStatus.CREATED).body(token);
     }
 
     @GetMapping("/login")
-    public ResponseEntity<String> processLogin(@RequestParam(required = true) String username,
+    public ResponseEntity<UserResponse> processLogin(@RequestParam(required = true) String username,
                                                 @RequestParam(required = true) String password) {
-
+        UserResponse userResponse = new UserResponse();
         Optional<MyUser> user = userService.loginUser(username, password);
 
         if(!user.isPresent()) {
@@ -67,6 +87,22 @@ public class UserController {
                     "invalid Credentials");
         }
 
-        return ResponseEntity.ok(user.get().getCustomToken());
+        userResponse.setToken(user.get().getCustomToken());
+        userResponse.setAdmin(user.get().isAdmin());
+
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable long id) {
+        Optional<MyUser> user = userService.getUserByID(id);
+
+        if(!user.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        userService.deleteUser(user.get());
+
+        return ResponseEntity.status(204).build();
     }
 }

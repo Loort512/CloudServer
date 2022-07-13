@@ -1,12 +1,21 @@
 <template>
     <div class="files">
-      <FileModal :showModal="showModal" :item="modalItem"></FileModal>
+      <FileModal :showModal="showModal" :item="modalItem" @reloadItems="loadItems" ></FileModal>
         <div id="fileList">
             <div class="fileItem" v-for="item in items" v-bind:key="item.id" v-on:click="downloadItem(item)">
                 <div class="icon" ><img class="folderPic" src="../assets/folder.png"></div>
                 <div class="name">{{item.name}}</div>
             </div>
         </div>
+        <table class="table">
+          <tr>
+          <td><input type="file" name="file" id='doUpload' /></td>
+          </tr>
+          <tr>
+          <td></td>
+          <td><input type="submit" v-on:click='doUpload()' value="Upload" id="doUpload"/></td>
+          </tr>
+      </table>
     </div>
 </template>
 <script>
@@ -22,6 +31,7 @@ export default {
     return {
       urlGetAll: 'http://localhost:8105/api/file',
       urlDownload: 'http://localhost:8105/api/file',
+      url: 'http://localhost:8105/api/file',
       errors: [] ,
       items: [],
       interval: '',
@@ -31,9 +41,9 @@ export default {
   },
   methods: {
     loadItems: function () {
+      this.showModal = false;
       axios.defaults.headers.common['AuthorizationToken'] = `${this.$store.state.token}`;
       console.log("default headers: ", axios.defaults.headers.common)
-      console.log("token: ", this.urlGetAll)
       axios.get(this.urlGetAll)
         .then(response => {
           console.log("File loading: ", response)
@@ -44,13 +54,6 @@ export default {
           this.errors.push(e)
         })
     },
-    todo: function () {
-      const self = this
-      this.intervalid1 = setInterval(function () {
-        console.log('update File list')
-        self.loadItems()
-      }, 3000)
-    },
     downloadItem: function (item) {
       if(this.showModal){
         this.modalItem ={} ;
@@ -59,10 +62,29 @@ export default {
         this.modalItem = item;
         this.showModal = true;
       } 
+    },
+    doUpload: function () {
+      console.log('doUpload')
+      var formData = new FormData()
+      var uploadFile = document.getElementById('doUpload').files[0]
+      formData.append('file', uploadFile)
+      // this.activateWaiting('waiting for upload!')
+      // Vue.$status = 3
+      var headers = {
+        'Content-Type': 'multipart/form-data',
+        'Centent-Length': formData.length,
+        'token': this.$store.state.token
+      }
+      axios.post(this.url, formData, headers)
+        .then(function (response) {
+          console.log("duUpload response: ", response)
+        })
+        .catch(function () {
+        })
+        .finally(() => {
+          this.loadItems();
+        } )
     }
-  },
-  mounted: function () {
-    // this.todo()
   },
   created() {
     axios.defaults.headers.common['AuthorizationToken'] = `${this.$store.state.token}`;

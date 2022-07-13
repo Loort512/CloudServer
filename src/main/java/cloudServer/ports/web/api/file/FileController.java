@@ -89,7 +89,7 @@ public class FileController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping()
+    @PatchMapping()
     public ResponseEntity<MyFile> updateFile(@RequestBody MyFile toUpdate) {
         long sessionUID = apiService.getUserIdFromSession(session);
 

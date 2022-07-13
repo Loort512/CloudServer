@@ -22,5 +22,6 @@ export default{
     padding: 1%;
     color: red; 
     background-color: lightpink;
+    white-space: pre-wrap;
 } 
 </style>

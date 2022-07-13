@@ -7,7 +7,6 @@
             </template>
             <template v-slot:content>
                 <FileList/>
-                <Upload/>
             </template>
         </Content>
     </div>
@@ -15,14 +14,12 @@
 <script>
 import Content from '@/components/Content.vue'
 import FileList from '@/components/FileList.vue'
-import Upload from '@/components/Upload.vue'
 
 export default {
   name: 'StoreView',
   components: {
     Content,
-    FileList,
-    Upload
+    FileList
   },
   created(){
     
