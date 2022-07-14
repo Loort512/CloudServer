@@ -1,5 +1,6 @@
 <template>
     <div class="files">
+      <Alert v-if="showAlert" :msg="alertMsg"></Alert>
       <FileModal :showModal="showModal" :item="modalItem" @reloadItems="loadItems" ></FileModal>
         <div id="fileList">
             <div class="fileItem" v-for="item in items" v-bind:key="item.id" v-on:click="downloadItem(item)">
@@ -21,11 +22,13 @@
 <script>
 import axios from 'axios'
 import FileModal from './FileModal.vue'
+import Alert from './Alert.vue'
 
 export default {
   name: 'FileList',
   components:{
-    FileModal
+    FileModal,
+    Alert
 }, 
   data: function () {
     return {
@@ -36,7 +39,9 @@ export default {
       items: [],
       interval: '',
       showModal: false,
-      modalItem: Object
+      modalItem: Object,
+      showAlert: false,
+      alertMsg: ""
     }
   },
   methods: {
@@ -52,6 +57,8 @@ export default {
         .catch(e => {
           console.log(e)
           this.errors.push(e)
+          this.alertMsg = "Cannot load Files from Server - please login first";
+          this.showAlert = true;
         })
     },
     downloadItem: function (item) {
@@ -78,8 +85,8 @@ export default {
       axios.post(this.url, formData, headers)
         .then(function (response) {
           console.log("duUpload response: ", response)
-        })
-        .catch(function () {
+          this.alertMsg = "Successfully oploaded File";
+          this.showAlert = true;
         })
         .finally(() => {
           this.loadItems();
@@ -89,7 +96,6 @@ export default {
   created() {
     axios.defaults.headers.common['AuthorizationToken'] = `${this.$store.state.token}`;
     this.loadItems();
-    //axios.defaults.headers.common['Authorization'] = `Bearer ` + this.$store.state.token;
   } 
 }
 </script>

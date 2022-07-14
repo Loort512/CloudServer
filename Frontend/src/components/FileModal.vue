@@ -1,6 +1,6 @@
 <template>
    <div class="fileModal">
-    <!-- <Alert v-if="showAlert" :msg="alertMessage"></Alert> -->
+    <Alert v-if="showAlert" :msg="alertMsg"></Alert>
       <Modal v-if="showModal">
         <template v-slot:modalHeader>
              {{ item.name }}
@@ -67,7 +67,11 @@ export default {
           .then(response => {
             console.log("File loading: ", response)
             //this.item.name = "renamed";
-            this.items = response.data
+            this.items = response.data;
+
+            this.alertMsg = "Successfully renamed File"
+            this.showAlert = true;
+
           })
           .catch(e => {
             this.showAlert = true;
@@ -91,8 +95,13 @@ export default {
           console.log("downloadItem response: ", response);
           var file = new Blob([response.data]);
           saveAs(file, item.name);
+
+          this.alertMsg = "Successfully downloaded File";
+          this.showAlert = true;
         })
         .catch(e => {
+          this.alertMsg = "Cannot download File";
+          this.showAlert = true;
           console.log(e)
         })
     },
@@ -101,9 +110,13 @@ export default {
       var url = this.fileUrl + "/" + id;
       axios.delete(url).then(response => {
         console.log("response: ", response);
+        this.alertMsg = "Successfully deleted File";
+        this.showAlert = true;
       })
       .catch(e => {
         console.log("Loeschen fehlgeschlagen", e);
+        this.alertMsg = "Cannot delete File";
+        this.showAlert = true;
       })
       .finally(() =>{
         console.log("emit reload items");

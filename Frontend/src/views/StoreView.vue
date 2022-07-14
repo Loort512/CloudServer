@@ -3,7 +3,8 @@
         <Content headerTitle="Personal Storage">
           <template v-slot:header>
                 Hello Mark
- <br>                Your private Storage
+                <br>                
+                Your private Storage
             </template>
             <template v-slot:content>
                 <FileList/>
@@ -21,6 +22,12 @@ export default {
     Content,
     FileList
   },
+  data(){
+    return{
+      alertMessage: "hijpalökadhödölksdasd",
+      showAlert: true
+    } 
+  } ,
   created(){
     
   },

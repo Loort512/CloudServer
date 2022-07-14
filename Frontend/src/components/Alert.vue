@@ -15,13 +15,12 @@ export default{
 </script>
 <style scoped>
 .alert{
-    display: flex;
-    height: 10%;
-    justify-content: center;
-    width: auto;
     padding: 1%;
-    color: red; 
-    background-color: lightpink;
-    white-space: pre-wrap;
+    color: red;
+    background-color: lightpink;;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
 } 
 </style>
