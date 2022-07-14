@@ -1,6 +1,6 @@
 <template>
    <div class="fileModal">
-    <Alert v-if="showAlert" :msg="alertMsg"></Alert>
+    <Alert v-if="showAlert" :msg="alertMsg" :level="alertLevel"></Alert>
       <Modal v-if="showModal">
         <template v-slot:modalHeader>
              {{ item.name }}
@@ -43,7 +43,8 @@ export default {
       openRenameModal: false,
       fileUrl: 'http://localhost:8105/api/file',
       alertMsg: "",
-      showAlert: false
+      showAlert: false,
+      alertLevel: ""
     } 
   } ,
   props: {
@@ -65,15 +66,15 @@ export default {
 
         axios.patch(this.fileUrl, myFile)
           .then(response => {
-            console.log("File loading: ", response)
-            //this.item.name = "renamed";
             this.items = response.data;
 
+            this.alertLevel = "success";
             this.alertMsg = "Successfully renamed File"
             this.showAlert = true;
 
           })
           .catch(e => {
+            this.alertLevel = "error";
             this.showAlert = true;
             this.alertMsg = "Failed to update filename!";
             console.log(e)
@@ -96,10 +97,12 @@ export default {
           var file = new Blob([response.data]);
           saveAs(file, item.name);
 
+          this.alertLevel = "success";
           this.alertMsg = "Successfully downloaded File";
           this.showAlert = true;
         })
         .catch(e => {
+          this.alertLevel = "error";
           this.alertMsg = "Cannot download File";
           this.showAlert = true;
           console.log(e)
@@ -110,11 +113,13 @@ export default {
       var url = this.fileUrl + "/" + id;
       axios.delete(url).then(response => {
         console.log("response: ", response);
+        this.alertLevel = "success";
         this.alertMsg = "Successfully deleted File";
         this.showAlert = true;
       })
       .catch(e => {
         console.log("Loeschen fehlgeschlagen", e);
+        this.alertLevel = "error";
         this.alertMsg = "Cannot delete File";
         this.showAlert = true;
       })

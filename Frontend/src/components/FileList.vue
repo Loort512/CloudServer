@@ -1,6 +1,6 @@
 <template>
     <div class="files">
-      <Alert v-if="showAlert" :msg="alertMsg"></Alert>
+      <Alert v-if="showAlert" :msg="alertMsg" :level="alertLevel"></Alert>
       <FileModal :showModal="showModal" :item="modalItem" @reloadItems="loadItems" ></FileModal>
         <div id="fileList">
             <div class="fileItem" v-for="item in items" v-bind:key="item.id" v-on:click="downloadItem(item)">
@@ -41,7 +41,8 @@ export default {
       showModal: false,
       modalItem: Object,
       showAlert: false,
-      alertMsg: ""
+      alertMsg: "",
+      alertLevel: ""
     }
   },
   methods: {
@@ -75,8 +76,7 @@ export default {
       var formData = new FormData()
       var uploadFile = document.getElementById('doUpload').files[0]
       formData.append('file', uploadFile)
-      // this.activateWaiting('waiting for upload!')
-      // Vue.$status = 3
+
       var headers = {
         'Content-Type': 'multipart/form-data',
         'Centent-Length': formData.length,
@@ -84,8 +84,10 @@ export default {
       }
       axios.post(this.url, formData, headers)
         .then(function (response) {
-          console.log("duUpload response: ", response)
-          this.alertMsg = "Successfully oploaded File";
+        })
+        .catch(e => {
+          this.alertLevel = "error";
+          this.alertMsg = "Cannot upload File";
           this.showAlert = true;
         })
         .finally(() => {

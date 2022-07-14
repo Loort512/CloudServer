@@ -29,4 +29,6 @@ public interface FileService {
     boolean uploadFile(MultipartFile file, long userID);
 
     boolean deleteFile(long fileId);
+
+    boolean fileExists(String filename);
 }

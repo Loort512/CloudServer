@@ -102,6 +102,10 @@ public class FileController {
     public ResponseEntity<Void> uploadFile(@RequestPart("file") MultipartFile file) {
         int userID = apiService.getUserIdFromSession(session);
 
+        if(fileService.fileExists(file.getOriginalFilename())) {
+            return ResponseEntity.badRequest().build();
+        }
+
         if(!fileService.uploadFile(file, userID)) {
             return ResponseEntity.internalServerError().build();
         }

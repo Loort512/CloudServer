@@ -143,4 +143,12 @@ public class FileServiceImpl implements FileService {
         log.debug("File {} deleted", path.toAbsolutePath());
         return true;
     }
+
+    @Override
+    public boolean fileExists(String filename) {
+        return fileRepository.findAll()
+                .stream()
+                .anyMatch(file -> file.getFileName().equalsIgnoreCase(filename));
+    }
+
 }
