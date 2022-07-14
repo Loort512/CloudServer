@@ -70,11 +70,19 @@ public class FileController {
         }
 
         MediaType mediaType = MediaType.valueOf(mimeType);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        if(download) {
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + file.getName() + "\"");
+        }else {
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + file.getName() + "\"");
+        }
         try {
             ByteArrayResource res = new ByteArrayResource(Files.readAllBytes(file.toPath()));
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + file.getName() + "\"")
+                    .headers(headers)
                     .contentLength(file.length())
                     .contentType(mediaType)
                     .body(res);

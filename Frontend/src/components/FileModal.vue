@@ -91,13 +91,6 @@ export default {
           console.log("downloadItem response: ", response);
           var file = new Blob([response.data]);
           saveAs(file, item.name);
-
-          // var blob = new Blob([response.data], {type: "image/jpeg"});
-          // var link = document.createElement("a");
-          // link.href = window.URL.createObjectURL(blob);
-          // link.download = "myFileName.pdf";
-          // link.click();
-          //this.loadItems()
         })
         .catch(e => {
           console.log(e)
