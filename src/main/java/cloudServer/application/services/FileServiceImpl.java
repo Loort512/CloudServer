@@ -63,7 +63,13 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String getPathFromFile(long id) {
-        return STORAGE_PATH + "Unbenannt.PNG";
+        Optional<FileData> file = fileRepository.findById(id);
+
+        if(!file.isPresent()) {
+            log.error("File with id {} not found", id);
+            return "";
+        }
+        return STORAGE_PATH + file.get().getFileName();
     }
 
     @Override

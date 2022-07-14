@@ -30,13 +30,13 @@ public class CloudServer {
 		userRepository.save(u1);
 		userRepository.save(u2);
 
-		FileData f1 = new FileData(1, "cat.jpeg");
+		/*FileData f1 = new FileData(1, "cat.jpeg");
 		FileData f2 = new FileData(1, "Unbenannt.PNG");
 		FileData f3 = new FileData( 2, "tmp.txt");
 
 		fileRepository.save(f1);
 		fileRepository.save(f2);
-		fileRepository.save(f3);
+		fileRepository.save(f3);*/
 	}
 
 }

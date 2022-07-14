@@ -84,10 +84,12 @@ export default {
     downloadItem: function (item) {
       console.log('download item: ' + item)
       var url = this.fileUrl + '/' + item.id + "?download=true"
-      axios.get(url)
+      axios.get(url,{
+         responseType: 'blob',
+      } )
         .then(response => {
           console.log("downloadItem response: ", response);
-          var file = new Blob([response.data], {type: "image/jpeg"});
+          var file = new Blob([response.data]);
           saveAs(file, item.name);
 
           // var blob = new Blob([response.data], {type: "image/jpeg"});

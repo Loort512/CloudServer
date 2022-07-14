@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,8 +50,8 @@ public class FileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getFileById(@PathVariable long id,
-                                              @RequestParam(required = false) boolean download) {
+    public ResponseEntity<Resource> getFileById(@PathVariable long id,
+                                                @RequestParam(required = false) boolean download) {
         String filename = fileService.getPathFromFile(id);
 
         if(filename == null || filename == "") {
@@ -57,16 +59,26 @@ public class FileController {
         }
 
         File file = new File(filename);
-        FileInputStream resource = null;
-        try {
-            resource = new FileInputStream(file);
-            byte[] arr = new byte[(int) file.length()];
-            resource.read(arr);
-            resource.close();
 
-            return ResponseEntity.ok().
-                    header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + file.getName() + "\"").
-                    body(new ByteArrayResource(arr));
+        // get MediaType for Response
+        String mimeType;
+        try {
+            mimeType = Files.probeContentType(file.toPath());
+        } catch (IOException e) {
+            log.error("cannot detect mediaType of file {}. Set it to octet-stream", file.getAbsoluteFile());
+            mimeType = "application/octet-stream";
+        }
+
+        MediaType mediaType = MediaType.valueOf(mimeType);
+        try {
+            ByteArrayResource res = new ByteArrayResource(Files.readAllBytes(file.toPath()));
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + file.getName() + "\"")
+                    .contentLength(file.length())
+                    .contentType(mediaType)
+                    .body(res);
+
         } catch (FileNotFoundException e) {
             log.error(e.getMessage());
         } catch (IOException e) {
