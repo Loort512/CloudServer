@@ -1,8 +1,6 @@
 package cloudServer.ports.web.api.user;
 
 import lombok.Data;
-import org.apache.tomcat.util.codec.binary.StringUtils;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;

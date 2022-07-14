@@ -10,18 +10,15 @@ export default createStore({
   },
   mutations: {
     addToken: (state, payload) =>{
-      console.log("addToken: ", payload)
       state.token = payload;
       state.loggedIn = "true";
     } ,
     logout: (state, payload) => {
-      console.log("logout Vue Store")
       state.token = "";
       state.loggedIn = false;
       state.isAdmin = false;
     } ,
     addAdmin: (state, payload) => {
-      console.log("addAdmin: ", payload);
       state.isAdmin = payload;
     }  
   },

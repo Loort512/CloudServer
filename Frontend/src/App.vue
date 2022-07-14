@@ -41,12 +41,10 @@ export default{
       return this.$store.state.loggedIn !== "true";
     } ,
     logout(){
-      console.log("logout")
       this.$store.dispatch('logout', "");
       this.$router.push( {path: '/login'}  )
     } ,
     isAdmin() {
-      console.log("isAdmin for navi: ", this.$store.state.isAdmin);
       return this.$store.state.isAdmin;
     } 
   }  

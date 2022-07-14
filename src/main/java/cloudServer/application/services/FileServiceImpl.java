@@ -4,20 +4,17 @@ import cloudServer.domain.file.FileData;
 import cloudServer.domain.file.FileRepository;
 import cloudServer.domain.file.MyFile;
 import cloudServer.domain.file.service.FileService;
-import cloudServer.domain.user.MyUser;
 import cloudServer.domain.user.service.UserService;
-import cloudServer.ports.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +28,6 @@ import static cloudServer.ports.Constants.STORAGE_PATH;
 public class FileServiceImpl implements FileService {
 
     private final FileRepository fileRepository;
-    private final UserService userService;
 
     @Override
     public List<MyFile> getFileNames() {
@@ -80,8 +76,6 @@ public class FileServiceImpl implements FileService {
             return null;
         }
 
-
-        File oldFile = new File(fileData.get().getFileName());
         Path source = Paths.get(STORAGE_PATH + fileData.get().getFileName());
 
         try {

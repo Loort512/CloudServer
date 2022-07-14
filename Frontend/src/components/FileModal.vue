@@ -77,7 +77,6 @@ export default {
             this.alertLevel = "error";
             this.showAlert = true;
             this.alertMsg = "Failed to update filename!";
-            console.log(e)
           })
         this.openRenameModal = false;
       } else{
@@ -87,13 +86,11 @@ export default {
       
     } ,
     downloadItem: function (item) {
-      console.log('download item: ' + item)
       var url = this.fileUrl + '/' + item.id + "?download=true"
       axios.get(url,{
          responseType: 'blob',
       } )
         .then(response => {
-          console.log("downloadItem response: ", response);
           var file = new Blob([response.data]);
           saveAs(file, item.name);
 
@@ -105,26 +102,21 @@ export default {
           this.alertLevel = "error";
           this.alertMsg = "Cannot download File";
           this.showAlert = true;
-          console.log(e)
         })
     },
     deleteItem: function (id){
-      console.log("delete item ", id);
       var url = this.fileUrl + "/" + id;
       axios.delete(url).then(response => {
-        console.log("response: ", response);
         this.alertLevel = "success";
         this.alertMsg = "Successfully deleted File";
         this.showAlert = true;
       })
       .catch(e => {
-        console.log("Loeschen fehlgeschlagen", e);
         this.alertLevel = "error";
         this.alertMsg = "Cannot delete File";
         this.showAlert = true;
       })
       .finally(() =>{
-        console.log("emit reload items");
         this.$emit("reloadItems");
       } )
     } 

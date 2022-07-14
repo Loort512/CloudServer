@@ -5,7 +5,6 @@ import cloudServer.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +28,6 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // URLs without login:/register
         if(request.getRequestURL().toString().endsWith("/login")
                 || request.getRequestURL().toString().endsWith("/register") ) {
             return true;

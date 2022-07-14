@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "http://localhost:8080")//°°mr°° TODO: http://localhost:8080
 public class UserController {
 
     private final UserService userService;

@@ -5,9 +5,7 @@ import cloudServer.domain.file.MyFile;
 import cloudServer.domain.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,22 +14,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static cloudServer.ports.Constants.STORAGE_PATH;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/file")
 @CrossOrigin(origins = "*")
-//@CrossOrigin(origins = "http://localhost:8080")//°°mr°° TODO: http://localhost:8080
 public class FileController {
 
     private final FileService fileService;

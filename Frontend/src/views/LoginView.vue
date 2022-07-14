@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <Alert v-if="showAlert" :msg="alertMessage"></Alert>
+        <Alert v-if="showAlert" :msg="alertMessage" :level="alertLevel"></Alert>
         <Content headerTitle="Welcome to your Private Cloud">
             <template v-slot:header>
                 Login
@@ -63,7 +63,8 @@ export default {
           lastName: '',
           alertMessage: '',
           showAlert: false,
-          showRegisterForm: false
+          showRegisterForm: false,
+          alertLevel: ""
       } 
   }, 
   setup(){
@@ -80,10 +81,8 @@ export default {
             username: this.username,
             password: this.password
         }  
-        console.log("data: ", data);
         axios.get('http://localhost:8105/api/user/login?username='+data.username+'&password='+data.password+"&firstName")
         .then(response => {
-            console.log("login Response: ", response);
             this.$store.dispatch('addToken', response.data.token);
             this.$store.dispatch('addAdmin', response.data.admin);
             axios.defaults.headers.common['AuthorizationToken'] = this.$store.state.token;
@@ -91,13 +90,11 @@ export default {
         })
         .catch(error => {
             // handle error
-            console.log("login error:",error)
             this.showAlert = true;
             this.alertMessage = "Wrong credentials";
         })
     } ,
     register() {
-        console.log("showRegisterForm: ",this.showRegisterForm)
         if(!this.showRegisterForm){
             this.showRegisterForm = true;
             return;
@@ -109,22 +106,18 @@ export default {
             firstName: this.firstName,
             lastName: this.lastName
         }
-        console.log("register data: ", data);
         axios.put('http://localhost:8105/api/user/register', data)
         .then(response => {
-            console.log(response);
+            this.alertLevel = "success";
             this.showAlert = true;
             this.alertMessage = "Registration complete. Please login";
             // handle success
             //commit('SET_LOADED_TODOS', response.data.results)
         })
         .catch(error => {
-            console.log("error: ", error);
             this.showAlert = true;
             this.alertMessage = "Registration error\n";
             this.alertMessage += error.response.data;
-            // handle error
-            console.log(error)
         })
         .finally(() => {
              this.showRegisterForm = false;

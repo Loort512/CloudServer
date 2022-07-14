@@ -82,7 +82,6 @@ export default {
     } 
   } ,
   created(){
-    console.log("set token for AdminView: ", this.$store.state.token)
     axios.defaults.headers.common['AuthorizationToken'] = this.$store.state.token;
 
     this.loadAllUsers();
@@ -91,7 +90,6 @@ export default {
     loadAllUsers(){    
         axios.get(this.userURL)
             .then(response => {
-            console.log("get all Users Response: ", response.data);
             this.users = response.data;
             })
             .catch(error => {
@@ -102,7 +100,6 @@ export default {
     deleteUser(userId){
         axios.delete(this.userURL + userId)
             .then(response => {
-            console.log("delete User " + userId + " Users Response: ", response.data);
             this.loadAllUsers();
             })
             .catch(error => {

@@ -1,9 +1,7 @@
 <template>
     <div class="cloudStore">
         <Content headerTitle="Personal Storage">
-          <template v-slot:header>
-                Hello Mark
-                <br>                
+          <template v-slot:header>              
                 Your private Storage
             </template>
             <template v-slot:content>

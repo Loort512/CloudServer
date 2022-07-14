@@ -49,14 +49,11 @@ export default {
     loadItems: function () {
       this.showModal = false;
       axios.defaults.headers.common['AuthorizationToken'] = `${this.$store.state.token}`;
-      console.log("default headers: ", axios.defaults.headers.common)
       axios.get(this.urlGetAll)
         .then(response => {
-          console.log("File loading: ", response)
           this.items = response.data
         })
         .catch(e => {
-          console.log(e)
           this.errors.push(e)
           this.alertMsg = "Cannot load Files from Server - please login first";
           this.showAlert = true;
@@ -72,7 +69,6 @@ export default {
       } 
     },
     doUpload: function () {
-      console.log('doUpload')
       var formData = new FormData()
       var uploadFile = document.getElementById('doUpload').files[0]
       formData.append('file', uploadFile)
